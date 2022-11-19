@@ -1,0 +1,91 @@
+service: task-management-api
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: dev
+  region: us-west-1
+  environment:
+    DYNAMODB_TABLE_NAME: ${self.custom.tasksTableName}
+
+custom:
+  tasksTableName: tasks-table-${self.provider.stage}
+
+plugins:
+  - serverless-iam-roles-per-function
+
+functions:
+  getTaskByTaskId:
+    handler: api.getTaskByTaskId
+    name: get-task-by-task-id
+    timeout: 5 #seconds
+    events:
+      - http:
+          path: task/{taskId}
+          method: GET
+    iamRolesStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:GetItem"
+        Resources: !GetAtt TasksTable.Arn
+  createTask:
+    handler: api.createTask
+    name: create-task
+    memorySize: 128 # mb
+    timeout: 5 #seconds
+    events:
+      - http:
+          path: task
+          method: POST
+    iamRolesStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:PutItem"
+        Resources: !GetAtt TasksTable.Arn
+
+  updateTask:
+    handler: api.updateTask
+    name: update-task
+    memorySize: 128 # mb
+    timeout: 5 #seconds
+    events:
+      - http:
+          path: task/{taskId}
+          method: PUT
+    iamRolesStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:UpdateItem"
+        Resources: !GetAtt TasksTable.Arn
+
+  deleteTask:
+    handler: api.deleteTask
+    name: delete-task
+    memorySize: 128 # mb
+    timeout: 5 #seconds
+    events:
+      - http:
+          path: task/{taskId}
+          method: DELETE
+    iamRolesStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:DeleteItem"
+        Resources: !GetAtt TasksTable.Arn
+
+
+resources:
+  Resources:
+    TasksTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self.custom.tasksTableName}
+        AttributeDefinitions:
+          - AttributeName: taskId
+            AttributeType: Number
+        KeySchema:
+          - AttributeName: taskId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
