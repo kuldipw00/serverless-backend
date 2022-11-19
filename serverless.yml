@@ -6,10 +6,10 @@ provider:
   stage: dev
   region: us-west-1
   environment:
-    DYNAMODB_TABLE_NAME: ${self.custom.tasksTableName}
+    DYNAMODB_TABLE_NAME: ${self:custom.tasksTableName}
 
 custom:
-  tasksTableName: tasks-table-${self.provider.stage}
+  tasksTableName: tasks-table-${self:provider.stage}
 
 plugins:
   - serverless-iam-roles-per-function
@@ -79,10 +79,10 @@ resources:
     TasksTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self.custom.tasksTableName}
+        TableName: ${self:custom.tasksTableName}
         AttributeDefinitions:
           - AttributeName: taskId
-            AttributeType: Number
+            AttributeType: N
         KeySchema:
           - AttributeName: taskId
             KeyType: HASH
