@@ -3,38 +3,54 @@
 ![serverless-diagram](https://user-images.githubusercontent.com/69000290/203208595-37dfe8c6-45ac-4187-94c7-a509de54ddbf.png)
 
 
-# Following are aws hosted API's
-  1. Get Task details of specific task
-      https://enhllfxyl4.execute-api.us-west-1.amazonaws.com/dev/task/{taskId}
+## Following are aws hosted API's
+  ### Get Task details of specific task
+
+      GET: https://enhllfxyl4.execute-api.us-west-1.amazonaws.com/dev/task/{taskId}
       
-  2. Create Task: Provide necessary details in body.
+  ### Create Task: Provide necessary details in body.
   
       POST : https://enhllfxyl4.execute-api.us-west-1.amazonaws.com/dev/task
       Header : x-api-key = cnZ9jO9fxT298Z8WPAUyu5b36EghXM1V6zwDkmTq
      
-  3. Update Task : 
+  ### Update Task : 
   
       PUT : https://enhllfxyl4.execute-api.us-west-1.amazonaws.com/dev/task/{taskId}
       
-  4. Assign Task : 
+  ### Assign Task : 
+
       PUT : https://enhllfxyl4.execute-api.us-west-1.amazonaws.com/dev/task/{taskId}/assign/{memberId}
+      Header : x-api-key = cnZ9jO9fxT298Z8WPAUyu5b36EghXM1V6zwDkmTq
       
-  5. Accept Task : 
+  ### Accept Task : 
       PUT : https://enhllfxyl4.execute-api.us-west-1.amazonaws.com/dev/task/{taskId}/accept/{memberId}
       
-  6. Complete Task:
-      PUT : https://enhllfxyl4.execute-api.us-west-1.amazonaws.com/dev/task/{taskId}/complete
+  ### Complete Task:
+
+      PUT : https://enhllfxyl4.execute-api.us-west-1.amazonaws.com/dev/task/{taskId}/complete/{memberId}
       
-  7. Close Task:
-      PUT : https://enhllfxyl4.execute-api.us-west-1.amazonaws.com/dev/task/{taskId}/close
+  ### Close Task:
+
+      PUT : https://enhllfxyl4.execute-api.us-west-1.amazonaws.com/dev/task/{taskId}/close/{memberId}
       
-  8. Delete Task:
+  ### Delete Task:
+
       DELETE : https://enhllfxyl4.execute-api.us-west-1.amazonaws.com/dev/task/{taskId}
    
 
+# Getting Started
 
-1. Install Dependencies
-npm install
+## Clone Repo
+    git clone https://github.com/kuldipw00/serverless-backend.git
 
-2. Configure AWS credentials
-aws configure
+## Install Dependencies
+    npm install
+
+## Configure AWS credentials
+    aws configure
+
+## Deploy
+    serverless deploy
+
+## CI/CD
+    Also configured github actions, put aws credentials in settings of github action and then make changes in workflow/main.yaml.

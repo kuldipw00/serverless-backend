@@ -18,16 +18,48 @@ functions:
   getTaskByTaskId:
     handler: api.getTaskByTaskId
     name: get-task-by-task-id
+    memorySize: 128 # mb
     timeout: 5 #seconds
     events:
       - http:
           path: task/{taskId}
           method: GET
-    iamRolesStatements:
+    iamRoleStatements:
       - Effect: "Allow"
         Action:
           - "dynamodb:GetItem"
-        Resources: !GetAtt TasksTable.Arn
+        Resource: !GetAtt TasksTable.Arn
+
+  # getTaskByMemberId:
+  #   handler: api.getTaskByMemberId
+  #   name: get-task-by-member-id
+  #   memorySize: 128 # mb
+  #   timeout: 5 #seconds
+  #   events:
+  #     - http:
+  #         path: task/member/{memberId}
+  #         method: GET
+  #   iamRoleStatements:
+  #     - Effect: "Allow"
+  #       Action:
+  #         - "dynamodb:GetItem"
+  #       Resource: !GetAtt TasksTable.Arn
+
+  getAllTasksByMember:
+    handler: api.getAllTasksByMember
+    name: get-all-task-by-member-id
+    memorySize: 128 # mb
+    timeout: 5 #seconds
+    events:
+      - http:
+          path: task/member/{memberId}
+          method: GET
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:Scan"
+        Resource: !GetAtt TasksTable.Arn
+
   createTask:
     handler: api.createTask
     name: create-task
@@ -37,11 +69,11 @@ functions:
       - http:
           path: task
           method: POST
-    iamRolesStatements:
+    iamRoleStatements:
       - Effect: "Allow"
         Action:
           - "dynamodb:PutItem"
-        Resources: !GetAtt TasksTable.Arn
+        Resource: !GetAtt TasksTable.Arn
 
   updateTask:
     handler: api.updateTask
@@ -52,11 +84,75 @@ functions:
       - http:
           path: task/{taskId}
           method: PUT
-    iamRolesStatements:
+    iamRoleStatements:
       - Effect: "Allow"
         Action:
           - "dynamodb:UpdateItem"
-        Resources: !GetAtt TasksTable.Arn
+          - "dynamodb:GetItem"
+        Resource: !GetAtt TasksTable.Arn
+
+  assignTask:
+    handler: api.assignTask
+    name: assign-task
+    memorySize: 128 # mb
+    timeout: 5 #seconds
+    events:
+      - http:
+          path: task/{taskId}/assign/{memberId}
+          method: PUT
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:UpdateItem"
+        Resource: !GetAtt TasksTable.Arn
+      
+  acceptTask:
+    handler: api.acceptTask
+    name: accept-task
+    memorySize: 128 # mb
+    timeout: 5 #seconds
+    events:
+      - http:
+          path: task/{taskId}/accept/{memberId}
+          method: PUT
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:UpdateItem"
+          - "dynamodb:GetItem"
+        Resource: !GetAtt TasksTable.Arn
+
+  completeTask:
+      handler: api.completeTask
+      name: complete-task
+      memorySize: 128 # mb
+      timeout: 5 #seconds
+      events:
+        - http:
+            path: task/{taskId}/complete/{memberId}
+            method: PUT
+      iamRoleStatements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:UpdateItem"
+            - "dynamodb:GetItem"
+          Resource: !GetAtt TasksTable.Arn
+
+  closeTask:
+      handler: api.closeTask
+      name: close-task
+      memorySize: 128 # mb
+      timeout: 5 #seconds
+      events:
+        - http:
+            path: task/{taskId}/close/{memberId}
+            method: PUT
+      iamRoleStatements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:UpdateItem"
+            - "dynamodb:GetItem"
+          Resource: !GetAtt TasksTable.Arn
 
   deleteTask:
     handler: api.deleteTask
@@ -67,11 +163,11 @@ functions:
       - http:
           path: task/{taskId}
           method: DELETE
-    iamRolesStatements:
+    iamRoleStatements:
       - Effect: "Allow"
         Action:
           - "dynamodb:DeleteItem"
-        Resources: !GetAtt TasksTable.Arn
+        Resource: !GetAtt TasksTable.Arn
 
 
 resources:

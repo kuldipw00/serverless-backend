@@ -77,6 +77,12 @@
         "LogGroupName": "/aws/lambda/get-task-by-task-id"
       }
     },
+    "GetAllTasksByMemberLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/get-all-task-by-member-id"
+      }
+    },
     "CreateTaskLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
@@ -87,6 +93,30 @@
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
         "LogGroupName": "/aws/lambda/update-task"
+      }
+    },
+    "AssignTaskLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/assign-task"
+      }
+    },
+    "AcceptTaskLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/accept-task"
+      }
+    },
+    "CompleteTaskLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/complete-task"
+      }
+    },
+    "CloseTaskLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/close-task"
       }
     },
     "DeleteTaskLogGroup": {
@@ -140,10 +170,25 @@
                       "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/get-task-by-task-id:*"
                     },
                     {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/get-all-task-by-member-id:*"
+                    },
+                    {
                       "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/create-task:*"
                     },
                     {
                       "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/update-task:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/assign-task:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/accept-task:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/complete-task:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/close-task:*"
                     },
                     {
                       "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/delete-task:*"
@@ -160,10 +205,25 @@
                       "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/get-task-by-task-id:*:*"
                     },
                     {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/get-all-task-by-member-id:*:*"
+                    },
+                    {
                       "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/create-task:*:*"
                     },
                     {
                       "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/update-task:*:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/assign-task:*:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/accept-task:*:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/complete-task:*:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/close-task:*:*"
                     },
                     {
                       "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/delete-task:*:*"
@@ -197,12 +257,12 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/task-management-api/dev/1668877104658-2022-11-19T16:58:24.658Z/task-management-api.zip"
+          "S3Key": "serverless/task-management-api/dev/1669089710403-2022-11-22T04:01:50.403Z/task-management-api.zip"
         },
         "Handler": "api.getTaskByTaskId",
         "Runtime": "nodejs16.x",
         "FunctionName": "get-task-by-task-id",
-        "MemorySize": 1024,
+        "MemorySize": 128,
         "Timeout": 5,
         "Environment": {
           "Variables": {
@@ -211,13 +271,45 @@
         },
         "Role": {
           "Fn::GetAtt": [
-            "IamRoleLambdaExecution",
+            "GetTaskByTaskIdIamRoleLambdaExecution",
             "Arn"
           ]
         }
       },
       "DependsOn": [
+        "GetTaskByTaskIdIamRoleLambdaExecution",
         "GetTaskByTaskIdLogGroup"
+      ]
+    },
+    "GetAllTasksByMemberLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/task-management-api/dev/1669089710403-2022-11-22T04:01:50.403Z/task-management-api.zip"
+        },
+        "Handler": "api.getAllTasksByMember",
+        "Runtime": "nodejs16.x",
+        "FunctionName": "get-all-task-by-member-id",
+        "MemorySize": 128,
+        "Timeout": 5,
+        "Environment": {
+          "Variables": {
+            "DYNAMODB_TABLE_NAME": "tasks-table-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "GetAllTasksByMemberIamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "GetAllTasksByMemberIamRoleLambdaExecution",
+        "GetAllTasksByMemberLogGroup"
       ]
     },
     "CreateTaskLambdaFunction": {
@@ -227,7 +319,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/task-management-api/dev/1668877104658-2022-11-19T16:58:24.658Z/task-management-api.zip"
+          "S3Key": "serverless/task-management-api/dev/1669089710403-2022-11-22T04:01:50.403Z/task-management-api.zip"
         },
         "Handler": "api.createTask",
         "Runtime": "nodejs16.x",
@@ -241,12 +333,13 @@
         },
         "Role": {
           "Fn::GetAtt": [
-            "IamRoleLambdaExecution",
+            "CreateTaskIamRoleLambdaExecution",
             "Arn"
           ]
         }
       },
       "DependsOn": [
+        "CreateTaskIamRoleLambdaExecution",
         "CreateTaskLogGroup"
       ]
     },
@@ -257,7 +350,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/task-management-api/dev/1668877104658-2022-11-19T16:58:24.658Z/task-management-api.zip"
+          "S3Key": "serverless/task-management-api/dev/1669089710403-2022-11-22T04:01:50.403Z/task-management-api.zip"
         },
         "Handler": "api.updateTask",
         "Runtime": "nodejs16.x",
@@ -271,13 +364,138 @@
         },
         "Role": {
           "Fn::GetAtt": [
-            "IamRoleLambdaExecution",
+            "UpdateTaskIamRoleLambdaExecution",
             "Arn"
           ]
         }
       },
       "DependsOn": [
+        "UpdateTaskIamRoleLambdaExecution",
         "UpdateTaskLogGroup"
+      ]
+    },
+    "AssignTaskLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/task-management-api/dev/1669089710403-2022-11-22T04:01:50.403Z/task-management-api.zip"
+        },
+        "Handler": "api.assignTask",
+        "Runtime": "nodejs16.x",
+        "FunctionName": "assign-task",
+        "MemorySize": 128,
+        "Timeout": 5,
+        "Environment": {
+          "Variables": {
+            "DYNAMODB_TABLE_NAME": "tasks-table-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "AssignTaskIamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "AssignTaskIamRoleLambdaExecution",
+        "AssignTaskLogGroup"
+      ]
+    },
+    "AcceptTaskLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/task-management-api/dev/1669089710403-2022-11-22T04:01:50.403Z/task-management-api.zip"
+        },
+        "Handler": "api.acceptTask",
+        "Runtime": "nodejs16.x",
+        "FunctionName": "accept-task",
+        "MemorySize": 128,
+        "Timeout": 5,
+        "Environment": {
+          "Variables": {
+            "DYNAMODB_TABLE_NAME": "tasks-table-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "AcceptTaskIamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "AcceptTaskIamRoleLambdaExecution",
+        "AcceptTaskLogGroup"
+      ]
+    },
+    "CompleteTaskLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/task-management-api/dev/1669089710403-2022-11-22T04:01:50.403Z/task-management-api.zip"
+        },
+        "Handler": "api.completeTask",
+        "Runtime": "nodejs16.x",
+        "FunctionName": "complete-task",
+        "MemorySize": 128,
+        "Timeout": 5,
+        "Environment": {
+          "Variables": {
+            "DYNAMODB_TABLE_NAME": "tasks-table-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "CompleteTaskIamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "CompleteTaskIamRoleLambdaExecution",
+        "CompleteTaskLogGroup"
+      ]
+    },
+    "CloseTaskLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/task-management-api/dev/1669089710403-2022-11-22T04:01:50.403Z/task-management-api.zip"
+        },
+        "Handler": "api.closeTask",
+        "Runtime": "nodejs16.x",
+        "FunctionName": "close-task",
+        "MemorySize": 128,
+        "Timeout": 5,
+        "Environment": {
+          "Variables": {
+            "DYNAMODB_TABLE_NAME": "tasks-table-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "CloseTaskIamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "CloseTaskIamRoleLambdaExecution",
+        "CloseTaskLogGroup"
       ]
     },
     "DeleteTaskLambdaFunction": {
@@ -287,7 +505,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/task-management-api/dev/1668877104658-2022-11-19T16:58:24.658Z/task-management-api.zip"
+          "S3Key": "serverless/task-management-api/dev/1669089710403-2022-11-22T04:01:50.403Z/task-management-api.zip"
         },
         "Handler": "api.deleteTask",
         "Runtime": "nodejs16.x",
@@ -301,53 +519,104 @@
         },
         "Role": {
           "Fn::GetAtt": [
-            "IamRoleLambdaExecution",
+            "DeleteTaskIamRoleLambdaExecution",
             "Arn"
           ]
         }
       },
       "DependsOn": [
+        "DeleteTaskIamRoleLambdaExecution",
         "DeleteTaskLogGroup"
       ]
     },
-    "GetTaskByTaskIdLambdaVersionM3pC3FKjaEUc5j5GiOTFso4LeYIsXjAJoaTb6wf9g": {
+    "GetTaskByTaskIdLambdaVersioneY62y0tZP3eg9glM1myALFq3JQBKIpk7LH8FZw6H5qg": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetTaskByTaskIdLambdaFunction"
         },
-        "CodeSha256": "RrqIrthgcHevCmnEZWip0QsOO+44Wj5yxWeCKFD/i/U="
+        "CodeSha256": "KhFZhRHUWxcPu0+T+7eQwIZh8wxpcM7qwyK6/0qcFd8="
       }
     },
-    "CreateTaskLambdaVersion8Y8xF2t1SFKaf3qp5SSHFK8eijveYEIwFMdNU9LAn8": {
+    "GetAllTasksByMemberLambdaVersioncFPW0SRc9JfqLR8i9t7cExwWEUSPnGSNX0SD2xIJA": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "GetAllTasksByMemberLambdaFunction"
+        },
+        "CodeSha256": "KhFZhRHUWxcPu0+T+7eQwIZh8wxpcM7qwyK6/0qcFd8="
+      }
+    },
+    "CreateTaskLambdaVersion56ayuuo7zUxR9IEUHja7Dwt3nQr0OHPNIUcKg1DVY": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateTaskLambdaFunction"
         },
-        "CodeSha256": "RrqIrthgcHevCmnEZWip0QsOO+44Wj5yxWeCKFD/i/U="
+        "CodeSha256": "KhFZhRHUWxcPu0+T+7eQwIZh8wxpcM7qwyK6/0qcFd8="
       }
     },
-    "UpdateTaskLambdaVersionA5pBx47ctCsNKESf6VCHW3gNh4FJZBL5ZN6rBSKPM": {
+    "UpdateTaskLambdaVersionjQJLaKKGBNjMDaIilyXcvWnRE3vdZsYddhY0KJTxCo": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "UpdateTaskLambdaFunction"
         },
-        "CodeSha256": "RrqIrthgcHevCmnEZWip0QsOO+44Wj5yxWeCKFD/i/U="
+        "CodeSha256": "KhFZhRHUWxcPu0+T+7eQwIZh8wxpcM7qwyK6/0qcFd8="
       }
     },
-    "DeleteTaskLambdaVersion6XUTLbvppWAmra583cMlg4pCx9AnmSdNiRAtCqZWA8": {
+    "AssignTaskLambdaVersionHgl9gPWJ9fLMy0Ap1wKlupY7hLKSCTFuHe5aiutplHM": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "AssignTaskLambdaFunction"
+        },
+        "CodeSha256": "KhFZhRHUWxcPu0+T+7eQwIZh8wxpcM7qwyK6/0qcFd8="
+      }
+    },
+    "AcceptTaskLambdaVersionwaIxV0IkCbRmASKtZOjYyK5447pHUtRBkVACb6Zo": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "AcceptTaskLambdaFunction"
+        },
+        "CodeSha256": "KhFZhRHUWxcPu0+T+7eQwIZh8wxpcM7qwyK6/0qcFd8="
+      }
+    },
+    "CompleteTaskLambdaVersionvq7rGpgw7OidD4GqyEUop4Ui4QJaIY8INeAiiquTk": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "CompleteTaskLambdaFunction"
+        },
+        "CodeSha256": "KhFZhRHUWxcPu0+T+7eQwIZh8wxpcM7qwyK6/0qcFd8="
+      }
+    },
+    "CloseTaskLambdaVersiongK14VeEHzxGXTsgbNR62m10V7UaOZXSbQB3XWeXA": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "CloseTaskLambdaFunction"
+        },
+        "CodeSha256": "KhFZhRHUWxcPu0+T+7eQwIZh8wxpcM7qwyK6/0qcFd8="
+      }
+    },
+    "DeleteTaskLambdaVersionQL9uEAhmsGKvk3DiLbneCI1Yh7oZWfbypd9Q6a4NU": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "DeleteTaskLambdaFunction"
         },
-        "CodeSha256": "RrqIrthgcHevCmnEZWip0QsOO+44Wj5yxWeCKFD/i/U="
+        "CodeSha256": "KhFZhRHUWxcPu0+T+7eQwIZh8wxpcM7qwyK6/0qcFd8="
       }
     },
     "ApiGatewayRestApi": {
@@ -384,6 +653,126 @@
           "Ref": "ApiGatewayResourceTask"
         },
         "PathPart": "{taskId}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceTaskTaskidVarAssign": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceTaskTaskidVar"
+        },
+        "PathPart": "assign",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceTaskTaskidVarAssignMemberidVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceTaskTaskidVarAssign"
+        },
+        "PathPart": "{memberId}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceTaskTaskidVarAccept": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceTaskTaskidVar"
+        },
+        "PathPart": "accept",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceTaskTaskidVarAcceptMemberidVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceTaskTaskidVarAccept"
+        },
+        "PathPart": "{memberId}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceTaskTaskidVarComplete": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceTaskTaskidVar"
+        },
+        "PathPart": "complete",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceTaskTaskidVarCompleteMemberidVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceTaskTaskidVarComplete"
+        },
+        "PathPart": "{memberId}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceTaskTaskidVarClose": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceTaskTaskidVar"
+        },
+        "PathPart": "close",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceTaskTaskidVarCloseMemberidVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceTaskTaskidVarClose"
+        },
+        "PathPart": "{memberId}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceTaskMember": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceTask"
+        },
+        "PathPart": "member",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceTaskMemberMemberidVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceTaskMember"
+        },
+        "PathPart": "{memberId}",
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
         }
@@ -433,6 +822,52 @@
       },
       "DependsOn": [
         "GetTaskByTaskIdLambdaPermissionApiGateway"
+      ]
+    },
+    "ApiGatewayMethodTaskMemberMemberidVarGet": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceTaskMemberMemberidVar"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "GetAllTasksByMemberLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      },
+      "DependsOn": [
+        "GetAllTasksByMemberLambdaPermissionApiGateway"
       ]
     },
     "ApiGatewayMethodTaskPost": {
@@ -527,6 +962,190 @@
         "UpdateTaskLambdaPermissionApiGateway"
       ]
     },
+    "ApiGatewayMethodTaskTaskidVarAssignMemberidVarPut": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "PUT",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceTaskTaskidVarAssignMemberidVar"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "AssignTaskLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      },
+      "DependsOn": [
+        "AssignTaskLambdaPermissionApiGateway"
+      ]
+    },
+    "ApiGatewayMethodTaskTaskidVarAcceptMemberidVarPut": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "PUT",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceTaskTaskidVarAcceptMemberidVar"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "AcceptTaskLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      },
+      "DependsOn": [
+        "AcceptTaskLambdaPermissionApiGateway"
+      ]
+    },
+    "ApiGatewayMethodTaskTaskidVarCompleteMemberidVarPut": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "PUT",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceTaskTaskidVarCompleteMemberidVar"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "CompleteTaskLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      },
+      "DependsOn": [
+        "CompleteTaskLambdaPermissionApiGateway"
+      ]
+    },
+    "ApiGatewayMethodTaskTaskidVarCloseMemberidVarPut": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "PUT",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceTaskTaskidVarCloseMemberidVar"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "CloseTaskLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      },
+      "DependsOn": [
+        "CloseTaskLambdaPermissionApiGateway"
+      ]
+    },
     "ApiGatewayMethodTaskTaskidVarDelete": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
@@ -573,7 +1192,7 @@
         "DeleteTaskLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1668877102237": {
+    "ApiGatewayDeployment1669089708594": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -583,8 +1202,13 @@
       },
       "DependsOn": [
         "ApiGatewayMethodTaskTaskidVarGet",
+        "ApiGatewayMethodTaskMemberMemberidVarGet",
         "ApiGatewayMethodTaskPost",
         "ApiGatewayMethodTaskTaskidVarPut",
+        "ApiGatewayMethodTaskTaskidVarAssignMemberidVarPut",
+        "ApiGatewayMethodTaskTaskidVarAcceptMemberidVarPut",
+        "ApiGatewayMethodTaskTaskidVarCompleteMemberidVarPut",
+        "ApiGatewayMethodTaskTaskidVarCloseMemberidVarPut",
         "ApiGatewayMethodTaskTaskidVarDelete"
       ]
     },
@@ -594,6 +1218,43 @@
         "FunctionName": {
           "Fn::GetAtt": [
             "GetTaskByTaskIdLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "GetAllTasksByMemberLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "GetAllTasksByMemberLambdaFunction",
             "Arn"
           ]
         },
@@ -699,6 +1360,154 @@
         }
       }
     },
+    "AssignTaskLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "AssignTaskLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "AcceptTaskLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "AcceptTaskLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "CompleteTaskLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "CompleteTaskLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "CloseTaskLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "CloseTaskLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
     "DeleteTaskLambdaPermissionApiGateway": {
       "Type": "AWS::Lambda::Permission",
       "Properties": {
@@ -736,6 +1545,739 @@
         }
       }
     },
+    "GetTaskByTaskIdIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "task-management-api",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/get-task-by-task-id:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "TasksTable",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "task-management-api",
+              "dev",
+              "getTaskByTaskId",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    },
+    "GetAllTasksByMemberIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "task-management-api",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/get-all-task-by-member-id:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:Scan"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "TasksTable",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "task-management-api",
+              "dev",
+              "getAllTasksByMember",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    },
+    "CreateTaskIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "task-management-api",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/create-task:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:PutItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "TasksTable",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "task-management-api",
+              "dev",
+              "createTask",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    },
+    "UpdateTaskIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "task-management-api",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/update-task:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:UpdateItem",
+                    "dynamodb:GetItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "TasksTable",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "task-management-api",
+              "dev",
+              "updateTask",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    },
+    "AssignTaskIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "task-management-api",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/assign-task:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:UpdateItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "TasksTable",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "task-management-api",
+              "dev",
+              "assignTask",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    },
+    "AcceptTaskIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "task-management-api",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/accept-task:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:UpdateItem",
+                    "dynamodb:GetItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "TasksTable",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "task-management-api",
+              "dev",
+              "acceptTask",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    },
+    "CompleteTaskIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "task-management-api",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/complete-task:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:UpdateItem",
+                    "dynamodb:GetItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "TasksTable",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "task-management-api",
+              "dev",
+              "completeTask",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    },
+    "CloseTaskIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "task-management-api",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/close-task:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:UpdateItem",
+                    "dynamodb:GetItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "TasksTable",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "task-management-api",
+              "dev",
+              "closeTask",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    },
+    "DeleteTaskIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "task-management-api",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/delete-task:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:DeleteItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "TasksTable",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "task-management-api",
+              "dev",
+              "deleteTask",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    },
     "TasksTable": {
       "Type": "AWS::DynamoDB::Table",
       "Properties": {
@@ -771,16 +2313,25 @@
     "GetTaskByTaskIdLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetTaskByTaskIdLambdaVersionM3pC3FKjaEUc5j5GiOTFso4LeYIsXjAJoaTb6wf9g"
+        "Ref": "GetTaskByTaskIdLambdaVersioneY62y0tZP3eg9glM1myALFq3JQBKIpk7LH8FZw6H5qg"
       },
       "Export": {
         "Name": "sls-task-management-api-dev-GetTaskByTaskIdLambdaFunctionQualifiedArn"
       }
     },
+    "GetAllTasksByMemberLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "GetAllTasksByMemberLambdaVersioncFPW0SRc9JfqLR8i9t7cExwWEUSPnGSNX0SD2xIJA"
+      },
+      "Export": {
+        "Name": "sls-task-management-api-dev-GetAllTasksByMemberLambdaFunctionQualifiedArn"
+      }
+    },
     "CreateTaskLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateTaskLambdaVersion8Y8xF2t1SFKaf3qp5SSHFK8eijveYEIwFMdNU9LAn8"
+        "Ref": "CreateTaskLambdaVersion56ayuuo7zUxR9IEUHja7Dwt3nQr0OHPNIUcKg1DVY"
       },
       "Export": {
         "Name": "sls-task-management-api-dev-CreateTaskLambdaFunctionQualifiedArn"
@@ -789,16 +2340,52 @@
     "UpdateTaskLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "UpdateTaskLambdaVersionA5pBx47ctCsNKESf6VCHW3gNh4FJZBL5ZN6rBSKPM"
+        "Ref": "UpdateTaskLambdaVersionjQJLaKKGBNjMDaIilyXcvWnRE3vdZsYddhY0KJTxCo"
       },
       "Export": {
         "Name": "sls-task-management-api-dev-UpdateTaskLambdaFunctionQualifiedArn"
       }
     },
+    "AssignTaskLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "AssignTaskLambdaVersionHgl9gPWJ9fLMy0Ap1wKlupY7hLKSCTFuHe5aiutplHM"
+      },
+      "Export": {
+        "Name": "sls-task-management-api-dev-AssignTaskLambdaFunctionQualifiedArn"
+      }
+    },
+    "AcceptTaskLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "AcceptTaskLambdaVersionwaIxV0IkCbRmASKtZOjYyK5447pHUtRBkVACb6Zo"
+      },
+      "Export": {
+        "Name": "sls-task-management-api-dev-AcceptTaskLambdaFunctionQualifiedArn"
+      }
+    },
+    "CompleteTaskLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "CompleteTaskLambdaVersionvq7rGpgw7OidD4GqyEUop4Ui4QJaIY8INeAiiquTk"
+      },
+      "Export": {
+        "Name": "sls-task-management-api-dev-CompleteTaskLambdaFunctionQualifiedArn"
+      }
+    },
+    "CloseTaskLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "CloseTaskLambdaVersiongK14VeEHzxGXTsgbNR62m10V7UaOZXSbQB3XWeXA"
+      },
+      "Export": {
+        "Name": "sls-task-management-api-dev-CloseTaskLambdaFunctionQualifiedArn"
+      }
+    },
     "DeleteTaskLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "DeleteTaskLambdaVersion6XUTLbvppWAmra583cMlg4pCx9AnmSdNiRAtCqZWA8"
+        "Ref": "DeleteTaskLambdaVersionQL9uEAhmsGKvk3DiLbneCI1Yh7oZWfbypd9Q6a4NU"
       },
       "Export": {
         "Name": "sls-task-management-api-dev-DeleteTaskLambdaFunctionQualifiedArn"
