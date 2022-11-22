@@ -43,8 +43,8 @@
       DELETE : https://enhllfxyl4.execute-api.us-west-1.amazonaws.com/dev/task/{taskId}
       
   ### Following is POSTMAN collection json:
-  
-      [postman-collection-json.docx](https://github.com/kuldipw00/serverless-backend/files/10063639/postman-collection-json.docx)   
+  [postman-collection-json.docx](https://github.com/kuldipw00/serverless-backend/files/10063649/postman-collection-json.docx)
+        
       
   #### NOTE : 
        Task title should be greater than 3 char and no special char allowed except # and _
