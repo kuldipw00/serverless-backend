@@ -4,18 +4,23 @@
 
 
 ## Following are aws hosted API's
-  ### Get Task details of specific task
+  ### Get specific task details 
 
       GET: https://enhllfxyl4.execute-api.us-west-1.amazonaws.com/dev/task/{taskId}
       
-  ### Create Task: Provide necessary details in body.
+  ### Get task by memebr Id
+  
+      GET : https://enhllfxyl4.execute-api.us-west-1.amazonaws.com/dev/task/member/{memberId}
+      
+  ### Create Task: Provide taskId,Title and Description in body.
   
       POST : https://enhllfxyl4.execute-api.us-west-1.amazonaws.com/dev/task
       Header : x-api-key = cnZ9jO9fxT298Z8WPAUyu5b36EghXM1V6zwDkmTq
      
-  ### Update Task : 
+  ### Update Task : Provide Title and Description
   
       PUT : https://enhllfxyl4.execute-api.us-west-1.amazonaws.com/dev/task/{taskId}
+      Header : x-api-key = cnZ9jO9fxT298Z8WPAUyu5b36EghXM1V6zwDkmTq
       
   ### Assign Task : 
 
@@ -36,6 +41,17 @@
   ### Delete Task:
 
       DELETE : https://enhllfxyl4.execute-api.us-west-1.amazonaws.com/dev/task/{taskId}
+      
+  ### Following is POSTMAN collection json:
+  
+      [postman-collection-json.docx](https://github.com/kuldipw00/serverless-backend/files/10063639/postman-collection-json.docx)   
+      
+  #### NOTE : 
+       Task title should be greater than 3 char and no special char allowed except # and _
+       Member can update task which is assigned to them only
+       Only team-lead can create and assign task (need to provide API key)
+       A closed task cannot be changed
+       taskId need to provide manually
    
 
 # Getting Started
